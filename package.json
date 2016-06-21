@@ -1,0 +1,24 @@
+{
+  "name": "certnames",
+  "version": "1.0.0",
+  "description": "Export certificate common names from buffer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.phoenix.dj/phoenix/node-certnames.git"
+  },
+  "keywords": [
+    "x509",
+    "certificate",
+    "asn1"
+  ],
+  "author": "PhoeniX",
+  "license": "MIT",
+  "dependencies": {
+    "asn1.js": "^4.6.2",
+    "asn1.js-rfc3280": "^4.0.0"
+  }
+}
