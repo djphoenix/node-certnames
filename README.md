@@ -1,7 +1,12 @@
 # Certificate common names extract library
 
-[![NPM version](https://badge.fury.io/js/certnames.svg)](https://www.npmjs.com/package/certnames)
+[![NPM](https://nodei.co/npm/certnames.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/certnames/)
+
+[![npm](https://img.shields.io/npm/v/certnames.svg)](https://www.npmjs.com/package/certnames)
+[![npm](https://img.shields.io/npm/l/certnames.svg)](https://www.npmjs.com/package/certnames)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+[![npm](https://img.shields.io/npm/dm/certnames.svg)](https://www.npmjs.com/package/certnames)
+[![build](https://git.phoenix.dj/phoenix/node-certnames/badges/master/build.svg)](https://git.phoenix.dj/phoenix/node-certnames/build)
 
 This module provides API to get SSL certificate common names list.
 
