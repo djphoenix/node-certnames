@@ -1,6 +1,6 @@
 {
   "name": "certnames",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Export certificate common names from buffer",
   "main": "index.js",
   "scripts": {
