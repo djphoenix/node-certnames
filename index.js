@@ -59,8 +59,11 @@ function getCommonNames (buffer, encoding) {
 }
 
 function toRegEx (names) {
-  const domains = { wc: [], single: [], both: [] }
+  const domains = { wc: [], single: [], both: [], ip6: [] }
   names.forEach((e) => {
+    if (/^\[?[0-9a-f:]+\]?$/.test(e)) {
+      return domains.ip6.push(e)
+    }
     var wc = false
     if (e[0] === '*') {
       wc = true
@@ -78,6 +81,11 @@ function toRegEx (names) {
     return false
   })
   const entries = []
+  if (domains.ip6.length > 0) {
+    entries.push('(\\[?' + domains.ip6.map((e) => {
+      return e.replace(/:0([^0])/g, ':0?$1').replace(/:[0:]+:/, ':[0:]*:').replace(/:0{2,}/g, ':0*')
+    }).join('\\]?)|(\\[?') + '\\]?)')
+  }
   if (domains.single.length > 0) {
     entries.push(domains.single.join('|'))
   }
