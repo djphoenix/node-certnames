@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/l/certnames.svg)](https://www.npmjs.com/package/certnames)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![npm](https://img.shields.io/npm/dm/certnames.svg)](https://www.npmjs.com/package/certnames)
-[![build](https://git.phoenix.dj/phoenix/node-certnames/badges/master/build.svg)](https://git.phoenix.dj/phoenix/node-certnames/build)
+[![build](https://git.phoenix.dj/phoenix/node-certnames/badges/master/build.svg)](https://git.phoenix.dj/phoenix/node-certnames/builds)
 
 This module provides API to get SSL certificate common names list.
 
