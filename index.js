@@ -39,7 +39,13 @@ function getCommonNames (buffer, encoding) {
         case 'dNSName':
           return e.value
         case 'iPAddress':
-          return [e.value[0], e.value[1], e.value[2], e.value[3]].join('.')
+          if (e.value.length === 4) {
+            return [e.value[0], e.value[1], e.value[2], e.value[3]].join('.')
+          } else if (e.value.length === 16) {
+            return e.value.toString('hex').replace(/(.{4})/g, '$1:').replace(/:$/, '')
+          }
+          console.log('Unknown IP value: %s', e.value.toString('hex'))
+          return null
         default:
           console.log('Unknown type: %s', e.type)
           return null
