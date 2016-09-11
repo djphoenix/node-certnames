@@ -4,7 +4,7 @@
   "description": "Export certificate common names from buffer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/standard/bin/cmd.js && ./node_modules/mocha/bin/mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,9 @@
   "dependencies": {
     "asn1.js": "^4.6.2",
     "asn1.js-rfc3280": "^4.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.2",
+    "standard": "^8.0.0"
   }
 }
