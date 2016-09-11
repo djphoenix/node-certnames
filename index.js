@@ -87,7 +87,7 @@ function toRegEx (names) {
   if (domains.both.length > 0) {
     entries.push('([^\\.]+\\.)?(' + domains.both.join('|') + ')')
   }
-  return new RegExp('^((' + entries.join(')|(') + '))$', 'gm')
+  return new RegExp('^((' + entries.join(')|(') + '))$', 'm')
 }
 
 exports.getCommonNames = getCommonNames
