@@ -1,5 +1,6 @@
 'use strict'
 
+const net = require('net')
 const asn1 = require('asn1.js')
 const asn1Cert = require('asn1.js-rfc3280')
 
@@ -21,6 +22,34 @@ const ASNStr = asn1.define('ASNStr', function () {
     vid: this.videostr()
   })
 })
+
+function _getCommon (cns) {
+  const counts = {}
+  cns.forEach((t) => {
+    for (var i = 1; i <= t.length; i++) {
+      const cmn = t.slice(0, i).join('.')
+      counts[cmn] = (counts[cmn] || 0) + (i - 1)
+    }
+  })
+  var max = -1
+  var ret = null
+  Object.keys(counts).forEach((cmn) => {
+    if (counts[cmn] > max) {
+      ret = cmn
+      max = counts[cmn]
+    }
+  })
+  return {
+    common: ret,
+    entries: cns.filter((e, i, a) => {
+      const es = e.join('.')
+      if ((es === ret) ||
+          (es.indexOf(ret + '.') === 0)) {
+        return true
+      }
+    })
+  }
+}
 
 function getCommonNames (buffer, encoding) {
   if (encoding === undefined) {
@@ -59,41 +88,41 @@ function getCommonNames (buffer, encoding) {
 }
 
 function toRegEx (names) {
-  const domains = { wc: [], single: [], both: [], ip6: [] }
+  const domains = { cn: [], ip: [], ip6: [] }
   names.forEach((e) => {
-    if (/^\[?[0-9a-f:]+\]?$/.test(e)) {
-      return domains.ip6.push(e)
-    }
-    var wc = false
-    if (e[0] === '*') {
-      wc = true
-      e = e.split('.').splice(1).join('.')
-    }
-    e = e.replace(/\./g, '\\.')
-    if (wc) domains.wc.push(e)
-    else domains.single.push(e)
+    const ip = net.isIP(e)
+    if (ip === 4) return domains.ip.push(e)
+    if (ip === 6) return domains.ip6.push(e)
+    domains.cn.push(e.split('.').reverse())
   })
-  domains.wc = domains.wc.filter((e) => {
-    const idx = domains.single.indexOf(e)
-    if (idx === -1) return true
-    domains.single.splice(idx, 1)
-    domains.both.push(e)
-    return false
-  })
+  domains.cn.sort()
+
   const entries = []
   if (domains.ip6.length > 0) {
     entries.push('(\\[?' + domains.ip6.map((e) => {
-      return e.replace(/:0([^0])/g, ':0?$1').replace(/:[0:]+:/, ':[0:]*:').replace(/:0{2,}/g, ':0*')
+      return e.replace(/:0([^0])/g, ':0?$1').replace(/(^|:)[0:]+:/, '$1[0:]*:').replace(/:0{2,}/g, ':0*')
     }).join('\\]?)|(\\[?') + '\\]?)')
   }
-  if (domains.single.length > 0) {
-    entries.push(domains.single.join('|'))
+  if (domains.ip.length > 0) {
+    entries.push(domains.ip.map(e => e.split('.').map(i => '0*' + i).join('\\.')).join('|'))
   }
-  if (domains.wc.length > 0) {
-    entries.push('[^\\.]+\\.(' + domains.wc.join('|') + ')')
-  }
-  if (domains.both.length > 0) {
-    entries.push('([^\\.]+\\.)?(' + domains.both.join('|') + ')')
+  const starmap = e => e.replace(/\*/g, '[^.]+')
+  while (domains.cn.length > 0) {
+    const common = _getCommon(domains.cn)
+    const suf = common.common.split('.').reverse()
+    const ents = common.entries.map(e => e.slice(suf.length).join('.'))
+
+    const base = ents.indexOf('')
+    if (base !== -1) ents.splice(base, 1)
+
+    const entry =
+      (
+        (ents.length > 0)
+        ? '(((' + ents.map(e => e.split('.').reverse().map(starmap).join('\\.')).join(')|(') + '))\\.)' + (base !== -1 ? '?' : '')
+        : ''
+      ) + suf.map(starmap).join('\\.')
+    entries.push(entry)
+    domains.cn = domains.cn.filter(e => (common.entries.indexOf(e) === -1))
   }
   return new RegExp('^((' + entries.join(')|(') + '))$', 'm')
 }
